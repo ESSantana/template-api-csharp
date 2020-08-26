@@ -6,10 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.7" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Entities\EntityMapping\" />
+    <PackageReference Include="NLog" Version="4.7.4" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.2" />
   </ItemGroup>
 
 </Project>

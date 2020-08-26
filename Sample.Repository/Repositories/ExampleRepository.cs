@@ -1,33 +1,42 @@
-﻿using Sample.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using NLog;
+using Sample.Core.Entities;
+using Sample.Repository.Context;
 using Sample.Repository.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sample.Repository.Repositories
 {
     public class ExampleRepository : IExampleRepository
     {
-        public ExampleRepository()
-        {
+        private readonly SampleDbContext _context;
+        private readonly ILogger _logger;
 
+        public ExampleRepository(SampleDbContext context, ILogger logger)
+        {
+            _context = context;
+            _logger = logger;
         }
         public List<ExampleEntity> Get()
         {
-            return new List<ExampleEntity>
+            _logger.Debug("GetAll");
+            try
             {
-                new ExampleEntity
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Mock Name 1",
-                    Description = "Mock Description 1"
-                },
-                new ExampleEntity
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Mock Name 2",
-                    Description = "Mock Description 2"
-                }
-            };
+                var result = _context.ExampleEntities.
+                    AsNoTracking()
+                    .ToList();
+
+                _logger.Info($"Get Result: {result.Count}");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, $"GetAll Error: {ex.Message}");
+                throw;
+            }
         }
 
         public ExampleEntity Get(Guid Id)
