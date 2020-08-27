@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Sample.API;
 using Sample.Core.Services;
 using Sample.Core.Services.Interfaces;
+using Sample.Repository.Context;
 using Sample.Repository.Repositories;
 using Sample.Repository.Repositories.Interfaces;
 using System;
@@ -53,6 +55,10 @@ namespace Sample
             });
             services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
 
+            services.AddDbContext<SampleDbContext>(opt => opt.UseMySql(Configuration.GetConnectionString("DevConnection")));
+
+            services.AddScoped<SampleDbContext>();
+
             services.AddTransient<IExampleRepository, ExampleRepository>();
             services.AddTransient<IExampleService, ExampleService>();
         }
@@ -71,7 +77,7 @@ namespace Sample
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Example API");
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
