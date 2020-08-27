@@ -55,7 +55,7 @@ namespace Sample
             });
             services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
 
-            services.AddDbContext<SampleDbContext>(opt => opt.UseMySql("Server=127.0.0.1;Port=3306;Database=Sample;Uid=root;Pwd=root;"));
+            services.AddDbContext<SampleDbContext>(opt => opt.UseMySql(Configuration.GetConnectionString("DevConnection")));
 
             services.AddScoped<SampleDbContext>();
 
