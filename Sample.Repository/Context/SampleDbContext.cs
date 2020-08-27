@@ -11,14 +11,14 @@ namespace Sample.Repository.Context
     public class SampleDbContext : DbContext
     {
         public readonly DbOptions _dbOptions;
-        public readonly ILogger _logger;
+        // public readonly ILogger _logger;
 
         public DbSet<ExampleEntity> ExampleEntities { get; set; }
 
-        public SampleDbContext(DbContextOptions<SampleDbContext> options, IOptionsMonitor<DbOptions> dbOptions, ILogger logger) : base(options)
+        public SampleDbContext(DbContextOptions<SampleDbContext> options, IOptionsMonitor<DbOptions> dbOptions) : base(options)
         {
             _dbOptions = dbOptions.CurrentValue;
-            _logger = logger;
+            // _logger = logger;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,12 +55,12 @@ namespace Sample.Repository.Context
         {
             try
             {
-                _logger.Debug($"Saved successful!");
+                // _logger.Debug($"Saved successful!");
                 return base.SaveChanges();
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"Message: {ex.Message}");
+                // _logger.Error(ex, $"Message: {ex.Message}");
                 throw;
             }
 

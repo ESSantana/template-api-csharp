@@ -1,8 +1,9 @@
-﻿using Sample.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore.Internal;
+using Sample.Core.Entities;
 using Sample.Core.Services.Interfaces;
 using Sample.Repository.Repositories.Interfaces;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sample.Core.Services
 {
@@ -19,24 +20,53 @@ namespace Sample.Core.Services
         {
             return _repository.Get();
         }
-        public ExampleEntity Get(Guid Id)
+        public ExampleEntity Get(long Id)
         {
+            if (Id < 1)
+            {
+                return null;
+            }
+
             return _repository.Get(Id);
         }
 
-        public ExampleEntity Create(ExampleEntity entity)
+        public int Create(List<ExampleEntity> entities)
         {
-            return _repository.Create(entity);
+            if (entities.Any(x => string.IsNullOrEmpty(x.Name)))
+            {
+                return 0;
+            }
+
+            return _repository.Create(entities.Where(x => x.Id == 0).ToList());
         }
 
-        public ExampleEntity Delete(Guid Id)
+        public int Delete(long Id)
         {
+            var entityToDelete = Get(Id);
+            if (entityToDelete == null)
+            {
+                return 0;
+            }
+
             return _repository.Delete(Id);
         }
 
         public ExampleEntity Modify(ExampleEntity entity)
         {
-            return _repository.Modify(entity);
+
+            if (entity.Id > 0)
+            {
+                var actualEntity = Get(entity.Id);
+
+                if (string.IsNullOrEmpty(actualEntity.Name))
+                {
+                    return new ExampleEntity();
+                }
+
+                return _repository.Modify(entity);
+            }
+
+            return null;
         }
     }
 }

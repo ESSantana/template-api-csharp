@@ -55,7 +55,9 @@ namespace Sample
             });
             services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
 
-            services.AddDbContext<SampleDbContext>(opt => opt.UseMySql("Server=127.0.0.1:3306;Database=sample;Uid=root;Pwd=root;"));
+            services.AddDbContext<SampleDbContext>(opt => opt.UseMySql("Server=127.0.0.1;Port=3306;Database=Sample;Uid=root;Pwd=root;"));
+
+            services.AddScoped<SampleDbContext>();
 
             services.AddTransient<IExampleRepository, ExampleRepository>();
             services.AddTransient<IExampleService, ExampleService>();
@@ -75,7 +77,7 @@ namespace Sample
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Example API");
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

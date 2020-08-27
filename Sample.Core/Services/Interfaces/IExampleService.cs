@@ -1,5 +1,4 @@
 ﻿using Sample.Core.Entities;
-using System;
 using System.Collections.Generic;
 
 namespace Sample.Core.Services.Interfaces
@@ -7,9 +6,9 @@ namespace Sample.Core.Services.Interfaces
     public interface IExampleService
     {
         List<ExampleEntity> Get();
-        ExampleEntity Get(Guid Id);
-        ExampleEntity Create(ExampleEntity entity);
+        ExampleEntity Get(long Id);
+        int Create(List<ExampleEntity> entities);
         ExampleEntity Modify(ExampleEntity entity);
-        ExampleEntity Delete(Guid Id);
+        int Delete(long Id);
     }
 }

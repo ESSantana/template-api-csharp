@@ -5,11 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sample.Repository\Sample.Repository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Utils\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sample.Repository\Sample.Repository.csproj" />
+    <PackageReference Include="NLog" Version="4.7.4" />
   </ItemGroup>
 
 </Project>
