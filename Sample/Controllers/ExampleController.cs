@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sample.Core.Entities;
 using Sample.Core.Services.Interfaces;
@@ -20,6 +21,7 @@ namespace Sample.API.Controllers
 
         [HttpGet]
         [Route("get")]
+        [Authorize]
         public ActionResult<List<ExampleEntity>> Get()
         {
             _logger.LogDebug("Get All");
@@ -34,6 +36,7 @@ namespace Sample.API.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize]
         public ActionResult<ExampleEntity> Get(long id)
         {
             _logger.LogDebug("Get");
@@ -48,6 +51,7 @@ namespace Sample.API.Controllers
 
         [HttpPost]
         [Route("create")]
+        [Authorize]
         public ActionResult<object> Create(List<ExampleEntity> entities)
         {
             _logger.LogDebug("Create");
@@ -62,6 +66,7 @@ namespace Sample.API.Controllers
 
         [HttpPost]
         [Route("modify")]
+        [Authorize]
         public ActionResult<ExampleEntity> Modify(ExampleEntity entity)
         {
             _logger.LogDebug("Modify");
@@ -75,11 +80,12 @@ namespace Sample.API.Controllers
         }
 
         [HttpDelete]
-        [Route("delete")]
-        public ActionResult<object> Delete(long Id)
+        [Route("delete/{id}")]
+        [Authorize]
+        public ActionResult<object> Delete(long id)
         {
             _logger.LogDebug("Delete");
-            var result = _service.Delete(Id);
+            var result = _service.Delete(id);
 
             _logger.LogDebug($"Delete: {result} entities deleted");
 

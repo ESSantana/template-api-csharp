@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NLog;
 using Sample.Core.Entities;
 using System;
 using System.Linq;
@@ -11,14 +11,14 @@ namespace Sample.Repository.Context
     public class SampleDbContext : DbContext
     {
         public readonly DbOptions _dbOptions;
-        // public readonly ILogger _logger;
+        public readonly ILogger<SampleDbContext> _logger;
 
         public DbSet<ExampleEntity> ExampleEntities { get; set; }
 
-        public SampleDbContext(DbContextOptions<SampleDbContext> options, IOptionsMonitor<DbOptions> dbOptions) : base(options)
+        public SampleDbContext(DbContextOptions<SampleDbContext> options, IOptionsMonitor<DbOptions> dbOptions, ILogger<SampleDbContext> logger) : base(options)
         {
             _dbOptions = dbOptions.CurrentValue;
-            // _logger = logger;
+            _logger = logger;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,12 +55,13 @@ namespace Sample.Repository.Context
         {
             try
             {
-                // _logger.Debug($"Saved successful!");
-                return base.SaveChanges();
+                var result = base.SaveChanges();
+                _logger.LogDebug($"Saved successful!");
+                return result;
             }
             catch (Exception ex)
             {
-                // _logger.Error(ex, $"Message: {ex.Message}");
+                _logger.LogError(ex, $"Message: {ex.Message}");
                 throw;
             }
 
