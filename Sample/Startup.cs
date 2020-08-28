@@ -1,12 +1,15 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Sample.API;
+using Sample.Authorization;
 using Sample.Core.Services;
 using Sample.Core.Services.Interfaces;
 using Sample.Repository.Context;
@@ -14,6 +17,7 @@ using Sample.Repository.Repositories;
 using Sample.Repository.Repositories.Interfaces;
 using System;
 using System.Reflection;
+using System.Text;
 
 namespace Sample
 {
@@ -30,6 +34,26 @@ namespace Sample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddCors();
+
+            var key = Encoding.ASCII.GetBytes(Settings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x => 
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             services.AddSwaggerGen();
             services.AddSwaggerGen(c =>
@@ -70,6 +94,9 @@ namespace Sample
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
