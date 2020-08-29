@@ -12,9 +12,11 @@ namespace Sample.API.Models.DTO.Validators
 
             RuleFor(x => x.Name)
                 .NotNull()
+                .WithMessage("Name Required")
                 .NotEmpty()
+                .WithMessage("Name Required")
                 .MaximumLength(50)
-                .WithMessage("Name Required");
+                .WithMessage("Name length should be less than or equal 50");
 
             RuleFor(x => x.Description)
                 .MaximumLength(255)

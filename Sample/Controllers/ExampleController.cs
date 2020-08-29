@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Sample.API.Models.DTO;
+using Sample.API.Models.DTO.Validators;
 using Sample.Core.Entities;
 using Sample.Core.Services.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sample.API.Controllers
 {
@@ -13,10 +18,12 @@ namespace Sample.API.Controllers
     {
         private readonly ILogger<ExampleController> _logger;
         private readonly IExampleService _service;
-        public ExampleController(IExampleService service, ILogger<ExampleController> logger)
+        private readonly IMapper _mapper;
+        public ExampleController(IExampleService service, ILogger<ExampleController> logger, IMapper mapper)
         {
             _service = service;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -37,7 +44,7 @@ namespace Sample.API.Controllers
         [HttpGet]
         [Route("get/{id}")]
         [Authorize]
-        public ActionResult<ExampleEntity> Get(long id)
+        public ActionResult<ExampleDTO> Get(long id)
         {
             _logger.LogDebug("Get");
             var result = _service.Get(id);
@@ -45,17 +52,19 @@ namespace Sample.API.Controllers
             _logger.LogDebug($"Get result success? {result != null}");
 
             return result != null
-                ? (ActionResult)Ok(result)
+                ? (ActionResult)Ok(_mapper.Map<ExampleDTO>(result))
                 : NoContent();
         }
 
         [HttpPost]
         [Route("create")]
         [Authorize]
-        public ActionResult<object> Create(List<ExampleEntity> entities)
+        public ActionResult<object> Create(List<ExampleDTO> exampleDto)
         {
+            var exampleEntities = exampleDto.Select(e => _mapper.Map<ExampleEntity>(e)).ToList();
+
             _logger.LogDebug("Create");
-            var result = _service.Create(entities);
+            var result = _service.Create(exampleEntities);
 
             _logger.LogDebug($"Create: {result} entities created");
 
@@ -67,15 +76,17 @@ namespace Sample.API.Controllers
         [HttpPost]
         [Route("modify")]
         [Authorize]
-        public ActionResult<ExampleEntity> Modify(ExampleEntity entity)
+        public ActionResult<ExampleDTO> Modify(ExampleDTO exampleDto)
         {
+            var exampleEntity = _mapper.Map<ExampleEntity>(exampleDto);
+
             _logger.LogDebug("Modify");
-            var result = _service.Modify(entity);
+            var result = _service.Modify(exampleEntity);
 
             _logger.LogDebug($"Modify success? {string.IsNullOrEmpty(result.Name)}");
 
             return result.Id > 0
-                ? (ActionResult)Ok(result)
+                ? (ActionResult)Ok(_mapper.Map<ExampleDTO>(result))
                 : NoContent();
         }
 
@@ -90,7 +101,7 @@ namespace Sample.API.Controllers
             _logger.LogDebug($"Delete: {result} entities deleted");
 
             return result > 0
-                ? (ActionResult)Ok(new { TotalDeleted = result})
+                ? (ActionResult)Ok(new { TotalDeleted = result })
                 : NoContent();
         }
     }
