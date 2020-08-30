@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Sample.API;
+using Sample.API.Filters;
 using Sample.Authorization;
 using Sample.Core.Resources;
 using Sample.Core.Services;
@@ -54,6 +54,11 @@ namespace Sample
                 });
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+            services.AddMvc(config =>
+            {
+                config.Filters.Add(typeof(ExceptionFilter));
+            });
 
             services.Configure<RequestLocalizationOptions>(
                 options =>
