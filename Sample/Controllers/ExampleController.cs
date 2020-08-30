@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sample.API.Models.DTO;
-using Sample.API.Models.DTO.Validators;
 using Sample.Core.Entities;
 using Sample.Core.Services.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,6 +17,7 @@ namespace Sample.API.Controllers
         private readonly ILogger<ExampleController> _logger;
         private readonly IExampleService _service;
         private readonly IMapper _mapper;
+
         public ExampleController(IExampleService service, ILogger<ExampleController> logger, IMapper mapper)
         {
             _service = service;
@@ -83,9 +82,9 @@ namespace Sample.API.Controllers
             _logger.LogDebug("Modify");
             var result = _service.Modify(exampleEntity);
 
-            _logger.LogDebug($"Modify success? {string.IsNullOrEmpty(result.Name)}");
+            _logger.LogDebug($"Modify success? {result != null}");
 
-            return result.Id > 0
+            return result != null
                 ? (ActionResult)Ok(_mapper.Map<ExampleDTO>(result))
                 : NoContent();
         }

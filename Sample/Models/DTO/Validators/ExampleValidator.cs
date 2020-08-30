@@ -1,26 +1,30 @@
 ﻿using FluentValidation;
+using Sample.Core.Resources;
 
 namespace Sample.API.Models.DTO.Validators
 {
     public class ExampleValidator : AbstractValidator<ExampleDTO>
     {
-        public ExampleValidator()
+        private readonly IResourceLocalizer _localizer;
+        public ExampleValidator(IResourceLocalizer localizer)
         {
+            _localizer = localizer;
+
             RuleFor(x => x.Id)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Invalid Id format");
+                .WithMessage(string.Format(_localizer.GetString("FIELD_FORMAT"), "ID"));
 
             RuleFor(x => x.Name)
                 .NotNull()
-                .WithMessage("Name Required")
+                .WithMessage(string.Format(_localizer.GetString("FIELD_REQUIRED"), "NAME"))
                 .NotEmpty()
-                .WithMessage("Name Required")
+                .WithMessage(string.Format(_localizer.GetString("FIELD_REQUIRED"), "NAME"))
                 .MaximumLength(50)
-                .WithMessage("Name length should be less than or equal 50");
+                .WithMessage(string.Format(_localizer.GetString("SIZE_RULE"), "NAME", 50));
 
             RuleFor(x => x.Description)
                 .MaximumLength(255)
-                .WithMessage("Description length should be less than 255");
+                .WithMessage(string.Format(_localizer.GetString("SIZE_RULE"), "DESCRIPTION", 255));
         }
     }
 }

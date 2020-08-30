@@ -3,21 +3,27 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Sample.API;
 using Sample.Authorization;
+using Sample.Core.Resources;
 using Sample.Core.Services;
 using Sample.Core.Services.Interfaces;
 using Sample.Repository.Context;
 using Sample.Repository.Repositories;
 using Sample.Repository.Repositories.Interfaces;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 
@@ -37,8 +43,33 @@ namespace Sample
         {
             services.AddMvc()
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssembly(Assembly.Load("Sample.API")))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddDataAnnotationsLocalization(options =>
+                {
+                    options.DataAnnotationLocalizerProvider = (type, factory) =>
+                    {
+                        var assemblyName = new AssemblyName(typeof(Resource).GetTypeInfo().Assembly.FullName);
+                        return factory.Create("Resource", assemblyName.Name);
+                    };
+                });
+
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+            services.Configure<RequestLocalizationOptions>(
+                options =>
+                {
+                    var supportedCultures = new List<CultureInfo>
+                    {
+                        new CultureInfo("pt-BR"),
+                    };
+
+                    options.DefaultRequestCulture = new RequestCulture(culture: "pt-BR", uiCulture: "pt-BR");
+                    options.SupportedCultures = supportedCultures;
+                    options.SupportedUICultures = supportedCultures;
+
+                    options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
+                });
+
             services.AddControllers();
             services.AddCors();
 
@@ -48,7 +79,7 @@ namespace Sample
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(x => 
+            .AddJwtBearer(x =>
             {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
@@ -88,6 +119,7 @@ namespace Sample
             services.AddDbContext<SampleDbContext>(opt => opt.UseMySql(Configuration.GetConnectionString("DevConnection")));
 
             services.AddScoped<SampleDbContext>();
+            services.AddTransient<IResourceLocalizer, ResourceLocalizer>();
 
             services.AddTransient<IExampleRepository, ExampleRepository>();
             services.AddTransient<IExampleService, ExampleService>();
@@ -100,6 +132,11 @@ namespace Sample
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            var supportedCultures = new[] { new CultureInfo("pt-BR") };
+
+            var localization = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(localization.Value);
 
             app.UseAuthorization();
             app.UseAuthentication();
