@@ -19,7 +19,7 @@ namespace Sample.Core.Exceptions
         {
 
         }
-        
+
         public CustomException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
 

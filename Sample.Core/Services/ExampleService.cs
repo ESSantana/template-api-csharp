@@ -87,7 +87,7 @@ namespace Sample.Core.Services
                 if (actualEntity == null)
                 {
                     _logger.LogWarning("Invalid ID");
-                    return new ExampleEntity();
+                    return null;
                 }
 
                 var result = _repository.Modify(entity);

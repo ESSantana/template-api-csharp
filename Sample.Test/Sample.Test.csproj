@@ -14,8 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ControllerTests\" />
     <Folder Include="RepositoryTests\" />
-    <Folder Include="ServiceTests\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+    <ProjectReference Include="..\Sample.Repository\Sample.Repository.csproj" />
   </ItemGroup>
 
 </Project>

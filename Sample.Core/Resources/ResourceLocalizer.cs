@@ -17,7 +17,7 @@ namespace Sample.Core.Resources
         public string GetString(string key)
         {
             var result = _localizer[key];
-            return result; 
+            return result;
         }
     }
 }

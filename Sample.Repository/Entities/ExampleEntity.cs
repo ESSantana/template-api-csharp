@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Sample.Core.Entities
+﻿namespace Sample.Core.Entities
 {
     public class ExampleEntity
     {
