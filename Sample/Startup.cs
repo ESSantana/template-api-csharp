@@ -2,16 +2,20 @@ using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Sample.API;
 using Sample.API.Filters;
 using Sample.Authorization;
@@ -24,8 +28,10 @@ using Sample.Repository.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sample
 {
@@ -121,11 +127,13 @@ namespace Sample
             });
             services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
 
+            services.AddHealthChecks()
+                .AddCheck<CustomHealthCheck>("applicationHealth", tags: new[] { "app_tag" });
+
             services.AddDbContext<SampleDbContext>(opt => opt.UseMySql(Configuration.GetConnectionString("DevConnection")));
-
             services.AddScoped<SampleDbContext>();
-            services.AddTransient<IResourceLocalizer, ResourceLocalizer>();
 
+            services.AddTransient<IResourceLocalizer, ResourceLocalizer>();
             services.AddTransient<IExampleRepository, ExampleRepository>();
             services.AddTransient<IExampleService, ExampleService>();
         }
@@ -146,6 +154,12 @@ namespace Sample
             app.UseAuthorization();
             app.UseAuthentication();
 
+            app.UseHealthChecks("/healthy", new HealthCheckOptions()
+            {
+                Predicate = (check) => check.Tags.Contains("app_tag"),
+                ResponseWriter = WriteResponse
+            });
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -162,6 +176,25 @@ namespace Sample
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private async static Task WriteResponse(HttpContext context, HealthReport report)
+        {
+            context.Response.ContentType = "application/json; charset=utf-8";
+            var result = JsonConvert.SerializeObject(
+                new
+                {
+                    statusApplication = report.Status.ToString(),
+                    healthChecks = report.Entries.Select(e => new
+                    {
+                        check = e.Key,
+                        ErrorMessage = e.Value.Exception?.Message,
+                        statusMessage = e.Value.Description,
+                        status = Enum.GetName(typeof(HealthStatus), e.Value.Status)
+                    })
+                });
+
+            await context.Response.WriteAsync(result);
         }
     }
 }

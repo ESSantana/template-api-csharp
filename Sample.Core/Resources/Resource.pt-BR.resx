@@ -123,7 +123,13 @@
   <data name="FIELD_REQUIRED" xml:space="preserve">
     <value>O campo {0} é obrigatório</value>
   </data>
+  <data name="HEALTHY_STATUS" xml:space="preserve">
+    <value>A aplicação está ok</value>
+  </data>
   <data name="SIZE_RULE" xml:space="preserve">
     <value>O campo {0} deve ter tamanho menor ou igual a {1} caracteres</value>
+  </data>
+  <data name="UNHEALTHY_STATUS" xml:space="preserve">
+    <value>A aplicação está com problemas</value>
   </data>
 </root>
