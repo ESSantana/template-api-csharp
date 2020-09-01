@@ -28,7 +28,7 @@ namespace Sample.API.Controllers
         [HttpGet]
         [Route("get")]
         [Authorize]
-        public ActionResult<List<ExampleEntity>> Get()
+        public ActionResult<List<ExampleDTO>> Get()
         {
             _logger.LogDebug("Get All");
             var result = _service.Get();
@@ -36,7 +36,7 @@ namespace Sample.API.Controllers
             _logger.LogDebug($"Get All result: {result.Count}");
 
             return result.Count > 0
-                ? (ActionResult)Ok(result)
+                ? (ActionResult)Ok(result.Select(r => _mapper.Map<ExampleDTO>(r)).ToList())
                 : NoContent();
         }
 

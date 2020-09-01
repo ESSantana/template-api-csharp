@@ -14,13 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ControllerTests\" />
     <Folder Include="RepositoryTests\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
     <ProjectReference Include="..\Sample.Repository\Sample.Repository.csproj" />
+    <ProjectReference Include="..\Sample\Sample.API.csproj" />
   </ItemGroup>
 
 </Project>
