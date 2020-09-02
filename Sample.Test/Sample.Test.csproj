@@ -14,8 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="RepositoryTests\" />
-    <Folder Include="ServiceTests\" />
+    <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
+    <ProjectReference Include="..\Sample.Repository\Sample.Repository.csproj" />
+    <ProjectReference Include="..\Sample\Sample.API.csproj" />
   </ItemGroup>
 
 </Project>

@@ -32,6 +32,6 @@ namespace Sample.API.Controllers
         [HttpGet]
         [Route("validateToken")]
         [Authorize]
-        public ActionResult<string> IsTokenValide() => "Valid Token!" ; 
+        public ActionResult<string> IsTokenValide() => "Valid Token!";
     }
 }
