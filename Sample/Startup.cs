@@ -129,8 +129,7 @@ namespace Sample
 
             services.AddHealthChecks()
                 .AddCheck<CustomHealthCheck>("applicationHealth", tags: new[] { "app_tag" });
-
-            services.AddDbContext<SampleDbContext>(opt => opt.UseMySql(Configuration.GetConnectionString("DevConnection")));
+            services.AddDbContext<SampleDbContext>(opt => opt.UseMySql(Configuration.GetConnectionString("DevConnection"), new MySqlServerVersion("8.0.23")));
             services.AddScoped<SampleDbContext>();
 
             services.AddTransient<IResourceLocalizer, ResourceLocalizer>();
