@@ -1,6 +1,7 @@
 using AutoMapper;
+using Sample.API.AutoMapper.Mappers;
 
-namespace Sample.API
+namespace Sample.API.AutoMapper
 {
     public class AutoMapperProfile : Profile
     {

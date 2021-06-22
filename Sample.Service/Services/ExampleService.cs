@@ -1,22 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Sample.Core.Entities;
-using Sample.Core.Services.Interfaces;
-using Sample.Repository.Repositories.Interfaces;
+using Sample.Core.Entities.Models;
+using Sample.Repository.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sample.Core.Services
+namespace Sample.Service.Services
 {
     public class ExampleService : IExampleService
     {
         private readonly ILogger<ExampleService> _logger;
+        private readonly IMapper _mapper;
         private readonly IExampleRepository _repository;
 
-        public ExampleService(IExampleRepository repository, ILogger<ExampleService> logger)
+        public ExampleService(IExampleRepository repository, ILogger<ExampleService> logger, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public List<ExampleEntity> Get()
@@ -25,7 +27,7 @@ namespace Sample.Core.Services
             var result = _repository.Get();
 
             _logger.LogDebug($"Get All Result: {result.Count} entities");
-            return result;
+            return result.Select(r => _mapper.Map<ExampleEntity>(r)).ToList();
         }
 
         public ExampleEntity Get(long Id)
@@ -40,7 +42,7 @@ namespace Sample.Core.Services
             var result = _repository.Get(Id);
 
             _logger.LogDebug($"Get result? {result != null}");
-            return result;
+            return _mapper.Map<ExampleEntity>(result);
         }
 
         public int Create(List<ExampleEntity> entities)
@@ -53,7 +55,10 @@ namespace Sample.Core.Services
                 return 0;
             }
 
-            var result = _repository.Create(entities.Where(x => x.Id == 0).ToList());
+            var filteredEntities = entities.Where(x => x.Id == 0).ToList();
+            var entitiesToCreate = filteredEntities.Select(e => _mapper.Map<ExampleModel>(e)).ToList();
+
+            var result = _repository.Create(entitiesToCreate);
 
             _logger.LogDebug($"Create: {result} entities created");
 
@@ -80,24 +85,24 @@ namespace Sample.Core.Services
         public ExampleEntity Modify(ExampleEntity entity)
         {
             _logger.LogDebug("Modify");
-            if (entity.Id > 0)
+            if (entity.Id < 1)
             {
-                var actualEntity = Get(entity.Id);
-
-                if (actualEntity == null)
-                {
-                    _logger.LogWarning("Invalid ID");
-                    return null;
-                }
-
-                var result = _repository.Modify(entity);
-                _logger.LogDebug($"Modify success? {!string.IsNullOrEmpty(result.Name)}");
-
-                return result;
+                _logger.LogWarning("Invalid ID");
+                return null;
             }
 
-            _logger.LogWarning("Invalid ID");
-            return null;
+            var actualEntity = Get(entity.Id);
+
+            if (actualEntity == null)
+            {
+                _logger.LogWarning("Invalid ID");
+                return null;
+            }
+
+            var result = _repository.Modify(_mapper.Map<ExampleModel>(entity));
+            _logger.LogDebug($"Modify success? {!string.IsNullOrEmpty(result.Name)}");
+
+            return _mapper.Map<ExampleEntity>(result);
         }
     }
 }

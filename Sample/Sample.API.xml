@@ -4,5 +4,75 @@
         <name>Sample.API</name>
     </assembly>
     <members>
+        <member name="T:Sample.API.Controllers.AuthenticationContoller">
+            <summary>
+            Endpoints in charge of handling authentication request
+            </summary>
+        </member>
+        <member name="M:Sample.API.Controllers.AuthenticationContoller.#ctor(Microsoft.Extensions.Logging.ILogger{Sample.API.Controllers.ExampleController})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="logger">Logger instance</param>
+        </member>
+        <member name="M:Sample.API.Controllers.AuthenticationContoller.Authenticate">
+            <summary>
+            Get token to access others endpoints
+            </summary>
+            <returns>Return object with auth info</returns>
+        </member>
+        <member name="M:Sample.API.Controllers.AuthenticationContoller.IsTokenValide">
+            <summary>
+            Check if your token is valid
+            </summary>
+            <returns>Returns string if is valid</returns>
+        </member>
+        <member name="T:Sample.API.Controllers.ExampleController">
+            <summary>
+            Example endpoints
+            </summary>
+        </member>
+        <member name="M:Sample.API.Controllers.ExampleController.#ctor(Sample.Service.Services.IExampleService,Microsoft.Extensions.Logging.ILogger{Sample.API.Controllers.ExampleController},AutoMapper.IMapper)">
+            <summary>
+            constructor
+            </summary>
+            <param name="service">Example Service instance</param>
+            <param name="logger">Logger instance</param>
+            <param name="mapper">AutoMapper instance</param>
+        </member>
+        <member name="M:Sample.API.Controllers.ExampleController.Get">
+            <summary>
+            Get all objects
+            </summary>
+            <returns>List of objects</returns>
+        </member>
+        <member name="M:Sample.API.Controllers.ExampleController.Get(System.Int64)">
+            <summary>
+            Get objetc by id
+            </summary>
+            <param name="id">Object id</param>
+            <returns>Object with id requested</returns>
+        </member>
+        <member name="M:Sample.API.Controllers.ExampleController.Create(System.Collections.Generic.List{Sample.API.DTO.ExampleDTO})">
+            <summary>
+            Create a new object
+            </summary>
+            <param name="exampleDto">object format</param>
+            <returns>Number of objects created</returns>
+        </member>
+        <member name="M:Sample.API.Controllers.ExampleController.Modify(Sample.API.DTO.ExampleDTO)">
+            <summary>
+            Modify specific object
+            </summary>
+            <param name="exampleDto">Object to modify</param>
+            <returns>Object modified</returns>
+        </member>
+        <member name="M:Sample.API.Controllers.ExampleController.Delete(System.Int64)">
+            <summary>
+            Delete by id
+            </summary>
+            <param name="id">Id of the object that should be deleted</param>
+            <returns>Number of object deleted</returns>
+        </member>
     </members>
 </doc>

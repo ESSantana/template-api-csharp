@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Sample.Core.Entities;
 using Sample.Repository.Context;
-using Sample.Repository.Repositories.Interfaces;
+using Sample.Core.Entities.Models;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -19,16 +18,16 @@ namespace Sample.Repository.Repositories
             _context = context;
             _logger = logger;
         }
-        public List<ExampleEntity> Get()
+        public List<ExampleModel> Get()
         {
             _logger.LogDebug("GetAll");
             try
             {
-                var result = _context.ExampleEntities.
-                    AsNoTracking()
+                var result = _context.Set<ExampleModel>()
+                    .AsNoTracking()
                     .ToList();
 
-                _logger.LogDebug($"Get Result: {result.Count}");
+                _logger.LogDebug($"GetAll Result: {result.Count}");
 
                 return result;
             }
@@ -39,46 +38,46 @@ namespace Sample.Repository.Repositories
             }
         }
 
-        public ExampleEntity Get(long Id)
+        public ExampleModel Get(long Id)
         {
-            _logger.LogDebug("Get");
+            _logger.LogDebug("Get By Id");
             try
             {
-                var result = _context.ExampleEntities.
-                    AsNoTracking()
+                var result = _context.Set<ExampleModel>()
+                    .AsNoTracking()
                     .FirstOrDefault(x => x.Id == Id);
 
-                _logger.LogDebug($"Get Result: {result?.Id}");
+                _logger.LogDebug($"Get By Id Result: {result?.Id}");
 
                 return result;
             }
             catch (DbException ex)
             {
-                _logger.LogError(ex, $"Get Error: {ex.Message}");
+                _logger.LogError(ex, $"Get By Id Error: {ex.Message}");
                 throw;
             }
         }
 
-        public int Create(List<ExampleEntity> entities)
+        public int Create(List<ExampleModel> entities)
         {
             _logger.LogDebug("Create");
             try
             {
-                _context.ExampleEntities.AddRange(entities);
+                _context.Set<ExampleModel>().AddRange(entities);
 
                 var result = _context.SaveChanges();
 
-                if (result > 0)
+                if (result < 1)
                 {
-                    _logger.LogDebug($"Create: {result} entities created");
-
-                    return result;
+                    return 0;
                 }
-                return 0;
+                _logger.LogDebug($"Create: {result} entities created");
+
+                return result;
             }
             catch (DbException ex)
             {
-                _logger.LogError(ex, $"GetAll Error: {ex.Message}");
+                _logger.LogError(ex, $"Create Error: {ex.Message}");
                 throw;
             }
         }
@@ -88,7 +87,7 @@ namespace Sample.Repository.Repositories
             _logger.LogDebug("Delete");
             try
             {
-                _context.ExampleEntities.Remove(Get(Id));
+                _context.Set<ExampleModel>().Remove(Get(Id));
                 var result = _context.SaveChanges();
 
                 _logger.LogDebug($"Delete: entity with id({Id}) deleted");
@@ -102,7 +101,7 @@ namespace Sample.Repository.Repositories
             }
         }
 
-        public ExampleEntity Modify(ExampleEntity entity)
+        public ExampleModel Modify(ExampleModel entity)
         {
             _logger.LogDebug("Modify");
             try
@@ -111,14 +110,14 @@ namespace Sample.Repository.Repositories
                 actualEntity.Name = entity.Name;
                 actualEntity.Description = entity.Description;
 
-                _context.ExampleEntities.Update(actualEntity);
+                _context.Set<ExampleModel>().Update(actualEntity);
                 var result = _context.SaveChanges();
 
                 _logger.LogDebug($"Modify: {result} entity modified");
 
                 return result == 1
                   ? actualEntity
-                  : new ExampleEntity();
+                  : new ExampleModel();
             }
             catch (DbException ex)
             {
@@ -126,5 +125,6 @@ namespace Sample.Repository.Repositories
                 throw;
             }
         }
+
     }
 }

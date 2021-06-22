@@ -2,14 +2,17 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Sample.API.Models.DTO;
+using Sample.API.DTO;
 using Sample.Core.Entities;
-using Sample.Core.Services.Interfaces;
+using Sample.Service.Services;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Sample.API.Controllers
 {
+    /// <summary>
+    /// Example endpoints
+    /// </summary>
     [Route("api/example")]
     [ApiController]
     public class ExampleController : ControllerBase
@@ -18,6 +21,12 @@ namespace Sample.API.Controllers
         private readonly IExampleService _service;
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="service">Example Service instance</param>
+        /// <param name="logger">Logger instance</param>
+        /// <param name="mapper">AutoMapper instance</param>
         public ExampleController(IExampleService service, ILogger<ExampleController> logger, IMapper mapper)
         {
             _service = service;
@@ -25,6 +34,10 @@ namespace Sample.API.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get all objects
+        /// </summary>
+        /// <returns>List of objects</returns>
         [HttpGet]
         [Route("get")]
         [Authorize]
@@ -40,6 +53,11 @@ namespace Sample.API.Controllers
                 : NoContent();
         }
 
+        /// <summary>
+        /// Get objetc by id
+        /// </summary>
+        /// <param name="id">Object id</param>
+        /// <returns>Object with id requested</returns>
         [HttpGet]
         [Route("get/{id}")]
         [Authorize]
@@ -55,6 +73,11 @@ namespace Sample.API.Controllers
                 : NoContent();
         }
 
+        /// <summary>
+        /// Create a new object
+        /// </summary>
+        /// <param name="exampleDto">object format</param>
+        /// <returns>Number of objects created</returns>
         [HttpPost]
         [Route("create")]
         [Authorize]
@@ -72,6 +95,11 @@ namespace Sample.API.Controllers
                 : NoContent();
         }
 
+        /// <summary>
+        /// Modify specific object
+        /// </summary>
+        /// <param name="exampleDto">Object to modify</param>
+        /// <returns>Object modified</returns>
         [HttpPost]
         [Route("modify")]
         [Authorize]
@@ -89,6 +117,11 @@ namespace Sample.API.Controllers
                 : NoContent();
         }
 
+        /// <summary>
+        /// Delete by id
+        /// </summary>
+        /// <param name="id">Id of the object that should be deleted</param>
+        /// <returns>Number of object deleted</returns>
         [HttpDelete]
         [Route("delete/{id}")]
         [Authorize]

@@ -1,12 +1,19 @@
 using AutoMapper;
-using Sample.API.Models.DTO;
+using Sample.API.DTO;
 using Sample.Core.Entities;
+using Sample.Core.Entities.Models;
 
-public static class ExampleMapper
+
+namespace Sample.API.AutoMapper.Mappers
 {
-    public static void Map(Profile profile)
+    public static class ExampleMapper
     {
-        profile.CreateMap<ExampleDTO, ExampleEntity>();
-        profile.CreateMap<ExampleEntity, ExampleDTO>();
+        public static void Map(Profile profile)
+        {
+            profile.CreateMap<ExampleDTO, ExampleEntity>();
+            profile.CreateMap<ExampleEntity, ExampleDTO>();
+            profile.CreateMap<ExampleModel, ExampleEntity>();
+            profile.CreateMap<ExampleEntity, ExampleModel>();
+        }
     }
 }

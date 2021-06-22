@@ -1,20 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sample.Core.Entities;
+using Sample.Core.Entities.Models;
 using Sample.Repository.Context;
 
-namespace Sample.Repository.Entities.EntityMapping
+namespace Sample.Repository.Models.EntityMapping
 {
-    public class ExampleEntityMap : IEntityTypeConfiguration<ExampleEntity>
+    public class ExampleModelMap : IEntityTypeConfiguration<ExampleModel>
     {
         public readonly DbOptions _dbOptions;
 
-        public ExampleEntityMap(DbOptions dbOptions)
+        public ExampleModelMap(DbOptions dbOptions)
         {
             _dbOptions = dbOptions;
         }
 
-        public void Configure(EntityTypeBuilder<ExampleEntity> builder)
+        public void Configure(EntityTypeBuilder<ExampleModel> builder)
         {
             builder.ToTable("Example");
 

@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using Sample.Core.Resources;
 
-namespace Sample.API.Models.DTO.Validators
+namespace Sample.API.DTO.Validators
 {
-    public class ExampleValidator : AbstractValidator<ExampleDTO>
+    public class ExampleDTOValidator : AbstractValidator<ExampleDTO>
     {
         private readonly IResourceLocalizer _localizer;
-        public ExampleValidator(IResourceLocalizer localizer)
+        public ExampleDTOValidator(IResourceLocalizer localizer)
         {
             _localizer = localizer;
 

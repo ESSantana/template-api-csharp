@@ -1,7 +1,7 @@
 ﻿using Sample.Core.Entities;
 using System.Collections.Generic;
 
-namespace Sample.Core.Services.Interfaces
+namespace Sample.Service.Services
 {
     public interface IExampleService
     {

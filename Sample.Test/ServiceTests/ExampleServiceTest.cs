@@ -2,11 +2,14 @@
 using Moq;
 using NUnit.Framework;
 using Sample.Core.Entities;
-using Sample.Core.Services;
-using Sample.Repository.Repositories.Interfaces;
-using Sample.Test.Configuration.Service;
+using Sample.Service.Services;
+using Sample.Repository.Repositories;
+using Sample.Test.Configuration.Repository;
 using System.Collections.Generic;
 using System.Linq;
+using Sample.Core.Entities.Models;
+using AutoMapper;
+using Sample.Test.Configuration.Factory;
 
 namespace Sample.Test.ServiceTests
 {
@@ -19,15 +22,16 @@ namespace Sample.Test.ServiceTests
         public void Setup()
         {
             var logger = new Mock<ILogger<ExampleService>>();
+            var mapper = AutoMapperFactory.GetMapper();
             repository = new Mock<IExampleRepository>();
 
             repository.Setup(r => r.Get()).Returns(ExampleMockResult.Get());
             repository.Setup(r => r.Get(It.IsAny<long>())).Returns(ExampleMockResult.Get().First());
-            repository.Setup(r => r.Create(It.IsAny<List<ExampleEntity>>())).Returns(1);
-            repository.Setup(r => r.Modify(It.IsAny<ExampleEntity>())).Returns(ExampleMockResult.Get().First());
+            repository.Setup(r => r.Create(It.IsAny<List<ExampleModel>>())).Returns(1);
+            repository.Setup(r => r.Modify(It.IsAny<ExampleModel>())).Returns(ExampleMockResult.Get().First());
             repository.Setup(r => r.Delete(It.IsAny<long>())).Returns(1);
 
-            service = new ExampleService(repository.Object, logger.Object);
+            service = new ExampleService(repository.Object, logger.Object, mapper);
         }
 
         [Test]
@@ -82,7 +86,7 @@ namespace Sample.Test.ServiceTests
 
             Assert.Multiple(() =>
             {
-                repository.Verify(r => r.Create(It.IsAny<List<ExampleEntity>>()), Times.Once);
+                repository.Verify(r => r.Create(It.IsAny<List<ExampleModel>>()), Times.Once);
                 Assert.NotZero(result);
             });
         }
@@ -101,7 +105,7 @@ namespace Sample.Test.ServiceTests
 
             Assert.Multiple(() =>
             {
-                repository.Verify(r => r.Create(It.IsAny<List<ExampleEntity>>()), Times.Never);
+                repository.Verify(r => r.Create(It.IsAny<List<ExampleModel>>()), Times.Never);
                 Assert.Zero(result);
             });
         }
@@ -121,7 +125,7 @@ namespace Sample.Test.ServiceTests
         [Test]
         public void DeleteExample_WithInvalidId_ShouldReturn_Zero()
         {
-            repository.Setup(x => x.Get(It.IsAny<long>())).Returns((ExampleEntity)null);
+            repository.Setup(x => x.Get(It.IsAny<long>())).Returns((ExampleModel)null);
 
             var result = service.Delete(3);
 
@@ -145,7 +149,7 @@ namespace Sample.Test.ServiceTests
 
             Assert.Multiple(() =>
             {
-                repository.Verify(r => r.Modify(It.IsAny<ExampleEntity>()), Times.Never);
+                repository.Verify(r => r.Modify(It.IsAny<ExampleModel>()), Times.Never);
                 Assert.Null(result);
             });
         }
@@ -153,7 +157,7 @@ namespace Sample.Test.ServiceTests
         [Test]
         public void ModifyExample_WithInvalidId_ShouldReturn_Null()
         {
-            repository.Setup(x => x.Get(It.IsAny<long>())).Returns((ExampleEntity)null);
+            repository.Setup(x => x.Get(It.IsAny<long>())).Returns((ExampleModel)null);
 
             var entity = new ExampleEntity
             {
@@ -166,7 +170,7 @@ namespace Sample.Test.ServiceTests
 
             Assert.Multiple(() =>
             {
-                repository.Verify(r => r.Modify(It.IsAny<ExampleEntity>()), Times.Never);
+                repository.Verify(r => r.Modify(It.IsAny<ExampleModel>()), Times.Never);
                 Assert.Null(result);
             });
         }
@@ -185,7 +189,7 @@ namespace Sample.Test.ServiceTests
 
             Assert.Multiple(() =>
             {
-                repository.Verify(r => r.Modify(It.IsAny<ExampleEntity>()), Times.Once);
+                repository.Verify(r => r.Modify(It.IsAny<ExampleModel>()), Times.Once);
                 Assert.NotNull(result);
             });
         }

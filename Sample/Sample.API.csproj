@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>F:\Codigo\TemplateProject\Sample\Sample.API.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
-    <ProjectReference Include="..\Sample.Repository\Sample.Repository.csproj" />
+    <ProjectReference Include="..\Sample.Service\Sample.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

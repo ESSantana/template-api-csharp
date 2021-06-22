@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
     <ProjectReference Include="..\Sample.Repository\Sample.Repository.csproj" />
+    <ProjectReference Include="..\Sample.Service\Sample.Service.csproj" />
     <ProjectReference Include="..\Sample\Sample.API.csproj" />
   </ItemGroup>
 

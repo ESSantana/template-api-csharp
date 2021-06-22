@@ -1,4 +1,4 @@
-﻿namespace Sample.API.Models.DTO
+﻿namespace Sample.API.DTO
 {
     public class ExampleDTO
     {
