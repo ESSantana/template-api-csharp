@@ -92,8 +92,13 @@ namespace Sample
             app.UseRequestLocalization(localization.Value);
 
             //app.UseHttpsRedirection();
-
             app.UseRouting();
+
+            var useCache = Configuration.GetValue<bool>("GlobalOptions:UseCache");
+            if (useCache)
+            {
+                app.ConfigureCacheResponseMiddleware();
+            }
 
             app.ConfigureAppAuthentication();
             app.ConfigureAppHealthCheck();
